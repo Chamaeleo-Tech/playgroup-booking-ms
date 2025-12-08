@@ -29,7 +29,7 @@ import {
     AccountCircle
 } from '@mui/icons-material';
 
-const drawerWidth = 260;
+const drawerWidth = 300;
 
 interface Props {
     children: React.ReactNode;
@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: Props) {
     const menuItems = [
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
         { text: 'Managers', icon: <PeopleIcon />, path: '/dashboard/managers' },
-        { text: 'Categories', icon: <CategoryIcon />, path: '/dashboard/categories' },
+        { text: 'Playground Categories', icon: <CategoryIcon />, path: '/dashboard/categories' },
     ];
 
     const drawer = (

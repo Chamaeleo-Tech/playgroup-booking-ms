@@ -5,10 +5,6 @@ import toast from "react-hot-toast";
 import {
     Box,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Paper,
     Table,
     TableBody,
@@ -16,21 +12,22 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     Typography,
     IconButton,
-    CircularProgress
+    CircularProgress,
+    Avatar
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
-import categoryService, { Category } from "@/services/categories.service";
+import categoryService, { PlaygroundCategory } from "@/services/categories.service";
+import CreateCategoryDialog from "@/components/categories/CreateCategoryDialog";
+import { API_BASE_URL } from "@/lib/api";
+import SecureAvatar from "@/components/SecureAvatar";
 
 export default function CategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<PlaygroundCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [formData, setFormData] = useState({ name: "" });
-    const [saving, setSaving] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<PlaygroundCategory | null>(null);
 
     const fetchCategories = async () => {
         try {
@@ -48,40 +45,31 @@ export default function CategoriesPage() {
         fetchCategories();
     }, []);
 
-    const handleOpen = (category?: Category) => {
-        if (category) {
-            setEditingCategory(category);
-            setFormData({ name: category.name });
-        } else {
-            setEditingCategory(null);
-            setFormData({ name: "" });
-        }
+    const handleOpen = (category?: PlaygroundCategory) => {
+        setEditingCategory(category || null);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
         setEditingCategory(null);
-        setFormData({ name: "" });
     };
 
-    const handleSubmit = async () => {
-        setSaving(true);
+    // handleSubmit now receives the formData from the child component
+    const handleSave = async (data: any) => {
         try {
             if (editingCategory) {
-                await categoryService.updateCategory(editingCategory.id, formData);
+                await categoryService.updateCategory(editingCategory.id, data);
                 toast.success("Category updated successfully");
             } else {
-                await categoryService.createCategory(formData);
+                await categoryService.createCategory(data);
                 toast.success("Category created successfully");
             }
-            handleClose();
             fetchCategories();
         } catch (error) {
             toast.error("Operation failed");
             console.error(error);
-        } finally {
-            setSaving(false);
+            throw error;
         }
     };
 
@@ -100,7 +88,7 @@ export default function CategoriesPage() {
     return (
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                <Typography variant="h4" fontWeight="bold">Categories</Typography>
+                <Typography variant="h4" fontWeight="bold">Playground Categories</Typography>
                 <Button
                     variant="contained"
                     startIcon={<Add />}
@@ -114,29 +102,64 @@ export default function CategoriesPage() {
                 <Table>
                     <TableHead sx={{ bgcolor: 'background.default' }}>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
                             <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Color</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                             <TableCell align="right" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
+                                <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
                                     <CircularProgress />
                                 </TableCell>
                             </TableRow>
                         ) : categories.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
+                                <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
                                     No categories found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             categories.map((category) => (
                                 <TableRow key={category.id} hover>
-                                    <TableCell>#{category.id}</TableCell>
+                                    <TableCell>
+                                        <SecureAvatar
+                                            imagePath={category.image}
+                                            fallbackLabel={category.name}
+                                            sx={{ width: 45, height: 45, border: "2px solid #e0e0e0" }}
+                                        />
+                                    </TableCell>
                                     <TableCell>{category.name}</TableCell>
+                                    <TableCell>
+                                        <Box
+                                            sx={{
+                                                width: 24,
+                                                height: 24,
+                                                borderRadius: '50%',
+                                                bgcolor: category.color,
+                                                border: '1px solid #e0e0e0'
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box
+                                            sx={{
+                                                px: 1,
+                                                py: 0.5,
+                                                borderRadius: 1,
+                                                bgcolor: category.deleted ? '#fee2e2' : '#dcfce7',
+                                                color: category.deleted ? '#991b1b' : '#166534',
+                                                display: 'inline-block',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            {category.deleted ? 'Deleted' : 'Active'}
+                                        </Box>
+                                    </TableCell>
                                     <TableCell align="right">
                                         <IconButton color="primary" onClick={() => handleOpen(category)}>
                                             <Edit />
@@ -152,25 +175,12 @@ export default function CategoriesPage() {
                 </Table>
             </TableContainer>
 
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle>{editingCategory ? "Edit Category" : "New Category"}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Category Name"
-                        fullWidth
-                        value={formData.name}
-                        onChange={(e) => setFormData({ name: e.target.value })}
-                    />
-                </DialogContent>
-                <DialogActions sx={{ p: 3 }}>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit} variant="contained" disabled={saving}>
-                        {saving ? "Saving..." : "Save"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <CreateCategoryDialog
+                open={open}
+                onClose={handleClose}
+                onSave={handleSave}
+                category={editingCategory}
+            />
         </Box>
     );
 }

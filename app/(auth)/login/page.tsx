@@ -74,10 +74,7 @@ export default function LoginPage() {
         <Grid container component="main" sx={{ height: '100vh' }}>
             {/* Left Side - Gradient Hero */}
             <Grid
-                item
-                xs={false}
-                sm={4}
-                md={7}
+                size={{ sm: 4, md: 7 }}
                 sx={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     display: { xs: 'none', sm: 'flex' },
@@ -170,10 +167,7 @@ export default function LoginPage() {
 
             {/* Right Side - Login Form */}
             <Grid
-                item
-                xs={12}
-                sm={8}
-                md={5}
+                size={{ xs: 12, sm: 8, md: 5 }}
                 component={Paper}
                 elevation={0}
                 square
