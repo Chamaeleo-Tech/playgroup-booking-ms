@@ -57,6 +57,9 @@ export default function LoginPage() {
             }
 
             localStorage.setItem("token", token);
+            if (response.data.refreshToken) {
+                localStorage.setItem("refreshToken", response.data.refreshToken);
+            }
             localStorage.setItem("user", JSON.stringify(response.data));
 
             toast.success("Welcome back, Admin!");

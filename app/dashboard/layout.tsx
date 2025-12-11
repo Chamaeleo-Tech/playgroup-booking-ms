@@ -26,7 +26,8 @@ import {
     People as PeopleIcon,
     Category as CategoryIcon,
     Logout as LogoutIcon,
-    AccountCircle
+    AccountCircle,
+    EventNote as EventIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 300;
@@ -67,6 +68,7 @@ export default function DashboardLayout({ children }: Props) {
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
         { text: 'Managers', icon: <PeopleIcon />, path: '/dashboard/managers' },
         { text: 'Playground Categories', icon: <CategoryIcon />, path: '/dashboard/categories' },
+        { text: 'Events', icon: <EventIcon />, path: '/dashboard/events' },
     ];
 
     const drawer = (
