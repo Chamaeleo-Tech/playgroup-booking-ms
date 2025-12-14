@@ -37,7 +37,7 @@ export default function EventsPage() {
         try {
             const data = await eventService.getAllEvents(page, rowsPerPage);
             setEvents(data.content);
-            setTotalElements(data.totalElements);
+            setTotalElements(data.page.totalElements);
         } catch (error) {
             toast.error("Failed to fetch events");
             console.error(error);
@@ -196,6 +196,9 @@ export default function EventsPage() {
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    showFirstButton
+                    showLastButton
+                    labelDisplayedRows={({ count }) => `Page ${page + 1} of ${Math.ceil(count / rowsPerPage)}`}
                 />
             </TableContainer>
 

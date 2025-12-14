@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { PageResponse } from "./events.service";
 
 export interface Ground {
     id: number;
@@ -28,17 +29,6 @@ export interface CreateManagerData {
     groundDescription?: string;
     popularFeatures?: string[];
     groundPicture?: File;
-}
-
-export interface PageResponse<T> {
-    content: T[];
-    totalElements: number;
-    totalPages: number;
-    size: number;
-    number: number;
-    first: boolean;
-    last: boolean;
-    empty: boolean;
 }
 
 export interface ManagerFilters {

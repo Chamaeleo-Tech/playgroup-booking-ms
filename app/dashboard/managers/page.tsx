@@ -60,7 +60,8 @@ export default function ManagersPage() {
                 size: rowsPerPage,
             });
             setManagers(response.content);
-            setTotalElements(response.totalElements);
+            setTotalElements(response.page.totalElements);
+
         } catch (error) {
             toast.error("Failed to fetch managers");
             console.error(error);
@@ -292,6 +293,9 @@ export default function ManagersPage() {
                     }}
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     sx={{ borderTop: '1px solid', borderColor: 'divider' }}
+                    showFirstButton
+                    showLastButton
+                    labelDisplayedRows={({ count }) => `Page ${page + 1} of ${Math.ceil(count / rowsPerPage)}`}
                 />
             </TableContainer>
 
