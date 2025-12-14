@@ -18,12 +18,14 @@ import {
     Tooltip,
     TablePagination
 } from "@mui/material";
-import { Add, Edit, Delete, Block } from "@mui/icons-material";
+import { Add, Edit, Delete, Block, Groups } from "@mui/icons-material";
 import eventService, { Event } from "@/services/events.service";
 import EventDialog from "@/components/events/EventDialog";
 import SecureAvatar from "@/components/SecureAvatar";
+import { useRouter } from "next/navigation";
 
 export default function EventsPage() {
+    const router = useRouter();
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
@@ -174,6 +176,14 @@ export default function EventsPage() {
                                         <Tooltip title="Edit">
                                             <IconButton color="primary" onClick={() => handleOpenDialog(event)}>
                                                 <Edit />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="View Registrations">
+                                            <IconButton
+                                                color="info"
+                                                onClick={() => router.push(`/dashboard/events/${event.id}/registrations`)}
+                                            >
+                                                <Groups />
                                             </IconButton>
                                         </Tooltip>
                                         {event.isActive && (

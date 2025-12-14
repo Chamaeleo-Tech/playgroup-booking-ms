@@ -49,6 +49,23 @@ export interface Page {
     number: number;
 }
 
+export interface UserSummary {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    profilePicture?: string;
+}
+
+export interface TeamRegistration {
+    id: number;
+    teamName: string;
+    numberOfPlayers: number;
+    eventId: number;
+    user: UserSummary;
+    createdAt: string;
+}
+
 class EventService {
     async getAllEvents(page = 0, size = 10): Promise<PageResponse<Event>> {
         const { data } = await api.get("/events", {
@@ -64,6 +81,11 @@ class EventService {
 
     async getEventById(id: number): Promise<Event> {
         const { data } = await api.get(`/events/${id}`);
+        return data;
+    }
+
+    async getEventRegistrations(eventId: number): Promise<TeamRegistration[]> {
+        const { data } = await api.get(`/events/${eventId}/registrations`);
         return data;
     }
 
