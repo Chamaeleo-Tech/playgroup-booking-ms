@@ -14,6 +14,7 @@ import {
     Grid,
     Stack
 } from "@mui/material";
+import Image from "next/image";
 import { Visibility, VisibilityOff, Email, Lock, Login as LoginIcon } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
@@ -79,7 +80,7 @@ export default function LoginPage() {
             <Grid
                 size={{ sm: 4, md: 7 }}
                 sx={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #00a195 0%, #00796b 100%)',
                     display: { xs: 'none', sm: 'flex' },
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -121,7 +122,7 @@ export default function LoginPage() {
                             textShadow: '0 4px 20px rgba(0,0,0,0.2)'
                         }}
                     >
-                        Admin Portal
+                        KickZone
                     </Typography>
                     <Typography
                         variant="h5"
@@ -131,42 +132,33 @@ export default function LoginPage() {
                             mb: 4
                         }}
                     >
-                        Playground Booking System
+                        Admin Portal
                     </Typography>
                     <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 4 }}>
                         <Box
                             sx={{
-                                width: 60,
-                                height: 60,
-                                borderRadius: '50%',
+                                width: 120,
+                                height: 120,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                                 bgcolor: 'rgba(255,255,255,0.2)',
-                                backdropFilter: 'blur(10px)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                            }}
-                        >
-                            <Lock sx={{ fontSize: 30 }} />
-                        </Box>
-                        <Box
-                            sx={{
-                                width: 60,
-                                height: 60,
                                 borderRadius: '50%',
-                                bgcolor: 'rgba(255,255,255,0.15)',
                                 backdropFilter: 'blur(10px)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                                p: 2
                             }}
                         >
-                            <Box sx={{ width: 12, height: 12, bgcolor: '#4ade80', borderRadius: '50%' }} />
+                            <Image
+                                src="/logo.png"
+                                alt="KickZone Logo"
+                                width={100}
+                                height={100}
+                                style={{ objectFit: 'contain' }}
+                            />
                         </Box>
                     </Stack>
                 </Box>
-            </Grid>
+            </Grid >
 
             {/* Right Side - Login Form */}
             <Grid
@@ -209,9 +201,7 @@ export default function LoginPage() {
                                 mb: 1,
                                 fontWeight: 'bold',
                                 textAlign: 'center',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
+                                color: 'primary.main',
                             }}
                         >
                             Welcome Back
@@ -295,10 +285,11 @@ export default function LoginPage() {
                                     mb: 2,
                                     py: 1.5,
                                     borderRadius: 2,
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                                    bgcolor: 'primary.main',
+                                    boxShadow: '0 4px 15px rgba(0, 161, 149, 0.4)',
                                     '&:hover': {
-                                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                                        bgcolor: 'primary.dark',
+                                        boxShadow: '0 6px 20px rgba(0, 161, 149, 0.6)',
                                         transform: 'translateY(-2px)',
                                         transition: 'all 0.3s ease'
                                     },
@@ -317,7 +308,7 @@ export default function LoginPage() {
                             color="text.secondary"
                             sx={{ display: 'block', textAlign: 'center', mt: 3 }}
                         >
-                            &copy; 2025 Playground Booking System
+                            &copy; 2025 KickZone. All rights reserved.
                         </Typography>
                     </Paper>
                 </Box>

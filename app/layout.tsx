@@ -3,8 +3,8 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 export const metadata = {
-  title: "Playground Admin",
-  description: "Admin Dashboard for Playground Booking System",
+  title: "KickZone Admin",
+  description: "Admin Dashboard for KickZone Booking System",
 };
 
 export default function RootLayout({

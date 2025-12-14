@@ -20,6 +20,7 @@ import {
     Chip,
     Stack
 } from '@mui/material';
+import Image from "next/image";
 import {
     Menu as MenuIcon,
     Dashboard as DashboardIcon,
@@ -74,25 +75,26 @@ export default function DashboardLayout({ children }: Props) {
     const drawer = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#ffffff' }}>
             <Toolbar sx={{ px: 3, py: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Box
                         sx={{
                             width: 40,
                             height: 40,
-                            borderRadius: 2,
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'white',
-                            fontWeight: 'bold',
-                            fontSize: '1.2rem'
                         }}
                     >
-                        A
+                        <Image
+                            src="/logo.png"
+                            alt="KickZone Logo"
+                            width={40}
+                            height={40}
+                            style={{ objectFit: 'contain' }}
+                        />
                     </Box>
                     <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b' }}>
-                        AdminZone
+                        KickZone
                     </Typography>
                 </Box>
             </Toolbar>
@@ -109,14 +111,14 @@ export default function DashboardLayout({ children }: Props) {
                                 py: 1.5,
                                 transition: 'all 0.2s ease',
                                 '&.Mui-selected': {
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    background: 'linear-gradient(135deg, #00a195 0%, #00796b 100%)',
                                     color: 'white',
-                                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                                    boxShadow: '0 4px 12px rgba(0, 161, 149, 0.3)',
                                     '& .MuiListItemIcon-root': {
                                         color: 'white',
                                     },
                                     '&:hover': {
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        background: 'linear-gradient(135deg, #00a195 0%, #00796b 100%)',
                                     }
                                 },
                                 '&:hover': {
@@ -125,7 +127,7 @@ export default function DashboardLayout({ children }: Props) {
                             }}
                         >
                             <ListItemIcon sx={{
-                                color: pathname === item.path ? 'white' : '#667eea',
+                                color: pathname === item.path ? 'white' : 'primary.main',
                                 minWidth: 40
                             }}>
                                 {item.icon}
@@ -199,7 +201,7 @@ export default function DashboardLayout({ children }: Props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-                        System Dashboard
+                        KickZone Dashboard
                     </Typography>
                     <Stack direction="row" spacing={2} alignItems="center">
                         <Chip
@@ -208,8 +210,8 @@ export default function DashboardLayout({ children }: Props) {
                             variant="outlined"
                             size="small"
                             sx={{
-                                borderColor: '#667eea',
-                                color: '#667eea',
+                                borderColor: 'primary.main',
+                                color: 'primary.main',
                                 fontWeight: 600
                             }}
                         />
@@ -217,7 +219,7 @@ export default function DashboardLayout({ children }: Props) {
                             sx={{
                                 width: 36,
                                 height: 36,
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                bgcolor: 'primary.main',
                                 fontSize: '0.9rem',
                                 fontWeight: 'bold'
                             }}

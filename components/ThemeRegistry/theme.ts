@@ -13,7 +13,7 @@ const theme = createTheme({
     palette: {
         mode: 'light',
         primary: {
-            main: '#4f46e5', // Indigo 600
+            main: '#00a195', // Teal
         },
         secondary: {
             main: '#ec4899', // Pink 500
