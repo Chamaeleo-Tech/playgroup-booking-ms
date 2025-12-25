@@ -21,7 +21,9 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Chip
+    Chip,
+    TextField,
+    LinearProgress
 } from '@mui/material';
 import {
     People,
@@ -52,23 +54,50 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 export default function DashboardPage() {
     const [data, setData] = useState<DashboardAnalytics | null>(null);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Default to current month
+    const [startDate, setStartDate] = useState(() => {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const year = firstDay.getFullYear();
+        const month = String(firstDay.getMonth() + 1).padStart(2, '0');
+        const day = String(firstDay.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const now = new Date();
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const year = lastDay.getFullYear();
+        const month = String(lastDay.getMonth() + 1).padStart(2, '0');
+        const day = String(lastDay.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    });
 
     useEffect(() => {
         const fetchData = async () => {
+            if (data) {
+                setRefreshing(true);
+            } else {
+                setLoading(true);
+            }
+
             try {
-                const analytics = await analyticsService.getDashboardData();
+                const analytics = await analyticsService.getDashboardData(startDate, endDate);
                 setData(analytics);
+                setError(null);
             } catch (err) {
                 console.error("Failed to fetch dashboard data", err);
                 setError("Failed to load dashboard analytics.");
             } finally {
                 setLoading(false);
+                setRefreshing(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [startDate, endDate]);
 
     if (loading) {
         return (
@@ -87,28 +116,28 @@ export default function DashboardPage() {
     }
 
     // Transform data for charts
-    const trendData = Object.entries(data.bookingsLast30Days).map(([date, count]) => ({
+    const trendData = Object.entries(data.dailyBookings || {}).map(([date, count]) => ({
         date,
         count
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    const sportData = Object.entries(data.bookingsBySportType).map(([name, value]) => ({
+    const sportData = Object.entries(data.bookingsBySportType || {}).map(([name, value]) => ({
         name,
         value
     }));
 
-    const playgroundData = Object.entries(data.topBookedPlaygrounds).map(([name, value]) => ({
+    const playgroundData = Object.entries(data.topBookedPlaygrounds || {}).map(([name, value]) => ({
         name,
         value
     }));
 
-    const peakHoursData = Object.entries(data.peakBookingHours).map(([hour, count]) => ({
+    const peakHoursData = Object.entries(data.peakBookingHours || {}).map(([hour, count]) => ({
         hour: `${hour}:00`,
         count
     })).sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
 
     const dayOrder = { "MONDAY": 1, "TUESDAY": 2, "WEDNESDAY": 3, "THURSDAY": 4, "FRIDAY": 5, "SATURDAY": 6, "SUNDAY": 7 };
-    const daysData = Object.entries(data.mostBookedDaysOfWeek).map(([day, count]) => ({
+    const daysData = Object.entries(data.mostBookedDaysOfWeek || {}).map(([day, count]) => ({
         day,
         count
     })).sort((a: any, b: any) => (dayOrder[a.day as keyof typeof dayOrder] || 0) - (dayOrder[b.day as keyof typeof dayOrder] || 0));
@@ -116,28 +145,54 @@ export default function DashboardPage() {
     return (
         <Box>
             <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1e293b', mb: 1 }}>
-                    Dashboard Overview
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Real-time analytics and booking statistics.
-                </Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1e293b', mb: 1 }}>
+                            Dashboard Overview
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                            Real-time analytics and booking statistics.
+                        </Typography>
+                    </Box>
+                    <Stack direction="row" spacing={2}>
+                        <TextField
+                            label="Start Date"
+                            type="date"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            sx={{ bgcolor: 'white' }}
+                        />
+                        <TextField
+                            label="End Date"
+                            type="date"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            sx={{ bgcolor: 'white' }}
+                        />
+                    </Stack>
+                </Stack>
             </Box>
+
+            {refreshing && <LinearProgress sx={{ mb: 4, borderRadius: 1 }} />}
 
             {/* Overview Cards */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
-                        title="Bookings Today"
-                        value={data.bookingsToday}
+                        title="Total Bookings"
+                        value={data.totalBookings || 0}
                         icon={<EventAvailable />}
                         color="#10b981"
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
-                        title="Bookings This Month"
-                        value={data.bookingsThisMonth}
+                        title="Total Revenue"
+                        value={`$${(data.totalRevenue || 0).toLocaleString()}`}
                         icon={<TrendingUp />}
                         color="#667eea"
                     />

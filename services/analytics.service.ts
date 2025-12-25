@@ -11,11 +11,11 @@ export interface RecentBooking {
 }
 
 export interface DashboardAnalytics {
-    bookingsToday: number;
-    bookingsThisMonth: number;
+    totalBookings: number;
+    totalRevenue: number;
     activePlaygrounds: number;
     inactivePlaygrounds: number;
-    bookingsLast30Days: Record<string, number>;
+    dailyBookings: Record<string, number>;
     bookingsBySportType: Record<string, number>;
     topBookedPlaygrounds: Record<string, number>;
     peakBookingHours: Record<string, number>;
@@ -27,8 +27,12 @@ class AnalyticsService {
     /**
      * Fetch all dashboard analytics data
      */
-    async getDashboardData(): Promise<DashboardAnalytics> {
-        const { data } = await api.get<DashboardAnalytics>("/analytics/dashboard");
+    async getDashboardData(startDate?: string, endDate?: string): Promise<DashboardAnalytics> {
+        const params: any = {};
+        if (startDate) params.startDate = startDate;
+        if (endDate) params.endDate = endDate;
+
+        const { data } = await api.get<DashboardAnalytics>("/analytics/dashboard", { params });
         return data;
     }
 }
