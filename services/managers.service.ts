@@ -38,6 +38,27 @@ export interface ManagerFilters {
     size?: number;
 }
 
+export interface BookingResponse {
+    id: number;
+    customerName: string;
+    playgroundName: string;
+    startTime: string;
+    status: string;
+    totalPrice: number;
+}
+
+export interface ManagerStats {
+    managerId: number;
+    totalBookings: number;
+    revenue: number;
+    bookingStats: Record<string, number>;
+    usageStats: {
+        occupancyRate: number;
+        totalHoursBooked: number;
+    };
+    recentActivity: BookingResponse[];
+}
+
 class ManagerService {
     /**
      * Fetch all playground managers with pagination and filters
@@ -142,6 +163,19 @@ class ManagerService {
                 "Content-Type": "multipart/form-data",
             },
         });
+        return data;
+    }
+
+    /**
+     * Get statistics for a specific manager
+     * TODO: Replace with actual API call when endpoint is ready
+     */
+    async getManagerStats(id: number, startDate?: string, endDate?: string): Promise<ManagerStats> {
+        const params: any = {};
+        if (startDate) params.startDate = startDate;
+        if (endDate) params.endDate = endDate;
+
+        const { data } = await api.get<ManagerStats>(`/managers/${id}/stats`, { params });
         return data;
     }
 }

@@ -26,7 +26,7 @@ import {
     TablePagination,
     InputAdornment
 } from "@mui/material";
-import { Add, Delete, Person, Mail, Search, Stadium, LocationOn, Edit } from "@mui/icons-material";
+import { Add, Delete, Person, Mail, Search, Stadium, LocationOn, Edit, Assessment as AssessmentIcon } from "@mui/icons-material";
 import managerService, { User } from "@/services/managers.service";
 import CreateManagerDialog from "@/components/managers/CreateManagerDialog";
 
@@ -274,6 +274,16 @@ export default function ManagersPage() {
                                             }}
                                         >
                                             <Delete fontSize="small" />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            href={`/dashboard/managers/${manager.id}`}
+                                            sx={{
+                                                color: 'text.secondary',
+                                                '&:hover': { color: 'info.main', bgcolor: 'info.lighter' }
+                                            }}
+                                        >
+                                            <AssessmentIcon fontSize="small" />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
