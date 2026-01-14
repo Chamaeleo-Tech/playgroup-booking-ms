@@ -29,7 +29,8 @@ import {
     Logout as LogoutIcon,
     AccountCircle,
     EventNote as EventIcon,
-    Star as PopularIcon
+    Star as PopularIcon,
+    Group as UsersIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 300;
@@ -68,6 +69,7 @@ export default function DashboardLayout({ children }: Props) {
 
     const menuItems = [
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+        { text: 'Users', icon: <UsersIcon />, path: '/dashboard/users' },
         { text: 'Managers', icon: <PeopleIcon />, path: '/dashboard/managers' },
         { text: 'Playground Categories', icon: <CategoryIcon />, path: '/dashboard/categories' },
         { text: 'Popular Grounds', icon: <PopularIcon />, path: '/dashboard/popular' },
