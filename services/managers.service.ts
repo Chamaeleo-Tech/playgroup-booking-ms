@@ -15,6 +15,7 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber?: string;
     role: string;
     ground?: Ground;
 }
@@ -24,6 +25,7 @@ export interface CreateManagerData {
     lastName: string;
     email: string;
     password: string;
+    phoneNumber?: string;
     groundName: string;
     groundAddress: string;
     groundDescription?: string;
@@ -34,6 +36,7 @@ export interface CreateManagerData {
 export interface ManagerFilters {
     email?: string;
     name?: string;
+    phoneNumber?: string;
     page?: number;
     size?: number;
 }
@@ -78,6 +81,10 @@ class ManagerService {
             params.name = filters.name;
         }
 
+        if (filters?.phoneNumber) {
+            params.phoneNumber = filters.phoneNumber;
+        }
+
         const { data } = await api.get("/users", { params });
         return data;
     }
@@ -93,6 +100,9 @@ class ManagerService {
         formData.append("lastName", managerData.lastName);
         formData.append("email", managerData.email);
         formData.append("password", managerData.password);
+        if (managerData.phoneNumber) {
+            formData.append("phoneNumber", managerData.phoneNumber);
+        }
 
         // Ground fields
         formData.append("groundName", managerData.groundName);

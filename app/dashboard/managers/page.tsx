@@ -8,6 +8,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     Paper,
     Table,
@@ -26,7 +27,7 @@ import {
     TablePagination,
     InputAdornment
 } from "@mui/material";
-import { Add, Delete, Person, Mail, Search, Stadium, LocationOn, Edit, Assessment as AssessmentIcon } from "@mui/icons-material";
+import { Add, Delete, Person, Mail, Search, Stadium, LocationOn, Edit, Assessment as AssessmentIcon, Phone } from "@mui/icons-material";
 import managerService, { User } from "@/services/managers.service";
 import CreateManagerDialog from "@/components/managers/CreateManagerDialog";
 
@@ -39,7 +40,10 @@ export default function ManagersPage() {
     const [totalElements, setTotalElements] = useState(0);
     const [searchEmail, setSearchEmail] = useState("");
     const [searchName, setSearchName] = useState("");
+    const [searchPhone, setSearchPhone] = useState("");
     const [selectedManager, setSelectedManager] = useState<User | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [managerToDelete, setManagerToDelete] = useState<User | null>(null);
 
     const handleEdit = (manager: User) => {
         setSelectedManager(manager);
@@ -56,6 +60,7 @@ export default function ManagersPage() {
             const response = await managerService.getManagers({
                 email: searchEmail || undefined,
                 name: searchName || undefined,
+                phoneNumber: searchPhone || undefined,
                 page,
                 size: rowsPerPage,
             });
@@ -72,17 +77,29 @@ export default function ManagersPage() {
 
     useEffect(() => {
         fetchManagers();
-    }, [page, rowsPerPage, searchEmail, searchName]);
+    }, [page, rowsPerPage, searchEmail, searchName, searchPhone]);
 
-    const handleDelete = async (id: number) => {
-        if (!confirm("Are you sure you want to delete this manager?")) return;
+    const openDeleteDialog = (manager: User) => {
+        setManagerToDelete(manager);
+        setDeleteDialogOpen(true);
+    };
+
+    const closeDeleteDialog = () => {
+        setDeleteDialogOpen(false);
+        setManagerToDelete(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!managerToDelete) return;
         try {
-            await managerService.deleteManager(id);
+            await managerService.deleteManager(managerToDelete.id);
             toast.success("Manager deleted successfully");
             fetchManagers();
         } catch (error) {
             toast.error("Failed to delete manager");
             console.error(error);
+        } finally {
+            closeDeleteDialog();
         }
     };
 
@@ -133,6 +150,23 @@ export default function ManagersPage() {
                         startAdornment: (
                             <InputAdornment position="start">
                                 <Search />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <TextField
+                    placeholder="Search by phone..."
+                    value={searchPhone}
+                    onChange={(e) => {
+                        setSearchPhone(e.target.value);
+                        setPage(0);
+                    }}
+                    size="small"
+                    sx={{ width: 300 }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Phone />
                             </InputAdornment>
                         ),
                     }}
@@ -199,17 +233,15 @@ export default function ManagersPage() {
                                         </Box>
                                     </TableCell>
                                     <TableCell>
-                                        <Stack direction="row" spacing={1} alignItems="center">
-                                            <Box sx={{
-                                                p: 0.5,
-                                                borderRadius: 1,
-                                                bgcolor: 'orange.50',
-                                                color: 'orange.600',
-                                                display: 'flex'
-                                            }}>
-                                                <Mail fontSize="small" sx={{ fontSize: 16 }} />
-                                            </Box>
-                                            <Typography variant="body2" sx={{ fontWeight: 500 }}>{manager.email}</Typography>
+                                        <Stack spacing={1}>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Mail fontSize="small" sx={{ color: 'text.secondary', fontSize: 16 }} />
+                                                <Typography variant="body2" sx={{ fontWeight: 500 }}>{manager.email}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Phone fontSize="small" sx={{ color: 'text.secondary', fontSize: 16 }} />
+                                                <Typography variant="body2">{manager.phoneNumber || 'N/A'}</Typography>
+                                            </Stack>
                                         </Stack>
                                     </TableCell>
                                     <TableCell>
@@ -267,7 +299,7 @@ export default function ManagersPage() {
                                         </IconButton>
                                         <IconButton
                                             size="small"
-                                            onClick={() => handleDelete(manager.id)}
+                                            onClick={() => openDeleteDialog(manager)}
                                             sx={{
                                                 color: 'text.secondary',
                                                 '&:hover': { color: 'error.main', bgcolor: 'error.lighter' }
@@ -317,6 +349,36 @@ export default function ManagersPage() {
                 }}
                 initialData={selectedManager}
             />
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={closeDeleteDialog}
+                maxWidth="xs"
+                fullWidth
+            >
+                <DialogTitle>Delete Manager</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete {managerToDelete?.firstName} {managerToDelete?.lastName}?
+                        <Box component="span" sx={{ display: 'block', mt: 1, color: 'error.main' }}>
+                            This action cannot be undone and will also delete their playground.
+                        </Box>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={closeDeleteDialog} color="inherit">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        color="error"
+                        variant="contained"
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

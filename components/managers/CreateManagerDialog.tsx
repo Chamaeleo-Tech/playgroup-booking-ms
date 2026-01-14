@@ -17,7 +17,7 @@ import {
     InputAdornment,
     Chip
 } from "@mui/material";
-import { Person, Mail, Lock, Stadium, LocationOn, CloudUpload, BadgeOutlined, Star, Close } from "@mui/icons-material";
+import { Person, Mail, Lock, Stadium, LocationOn, CloudUpload, BadgeOutlined, Star, Close, Phone } from "@mui/icons-material";
 import managerService, { User } from "@/services/managers.service";
 import api from "@/lib/api";
 
@@ -33,6 +33,7 @@ export default function CreateManagerDialog({ open, onClose, onSuccess, initialD
         firstName: "",
         lastName: "",
         email: "",
+        phoneNumber: "",
         password: "",
         groundName: "",
         groundAddress: "",
@@ -52,6 +53,7 @@ export default function CreateManagerDialog({ open, onClose, onSuccess, initialD
                     firstName: initialData.firstName || "",
                     lastName: initialData.lastName || "",
                     email: initialData.email || "",
+                    phoneNumber: initialData.phoneNumber || "",
                     password: "", // Don't populate password for security, only if changing
                     groundName: initialData.ground?.name || "",
                     groundAddress: initialData.ground?.address || "",
@@ -64,6 +66,7 @@ export default function CreateManagerDialog({ open, onClose, onSuccess, initialD
                     firstName: "",
                     lastName: "",
                     email: "",
+                    phoneNumber: "",
                     password: "",
                     groundName: "",
                     groundAddress: "",
@@ -149,6 +152,7 @@ export default function CreateManagerDialog({ open, onClose, onSuccess, initialD
                 firstName: "",
                 lastName: "",
                 email: "",
+                phoneNumber: "",
                 password: "",
                 groundName: "",
                 groundAddress: "",
@@ -235,6 +239,18 @@ export default function CreateManagerDialog({ open, onClose, onSuccess, initialD
                                 placeholder="e.g. john.doe@example.com"
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start"><Mail color="action" fontSize="small" /></InputAdornment>,
+                                }}
+                            />
+                            <TextField
+                                label="Phone Number"
+                                name="phoneNumber"
+                                type="tel"
+                                fullWidth
+                                value={formData.phoneNumber}
+                                onChange={handleChange}
+                                placeholder="e.g. +20 123 456 7890"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><Phone color="action" fontSize="small" /></InputAdornment>,
                                 }}
                             />
                             <TextField
