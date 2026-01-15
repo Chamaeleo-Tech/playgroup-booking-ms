@@ -51,8 +51,8 @@ export default function LoginPage() {
 
             const { token, role } = response.data;
 
-            if (!role.includes("ROLE_SYSTEM_ADMIN")) {
-                toast.error("Access denied. You must be a System Admin.");
+            if (!role.includes("ROLE_SYSTEM_ADMIN") && !role.includes("ROLE_STAFF")) {
+                toast.error("Access denied. Invalid role.");
                 setLoading(false);
                 return;
             }

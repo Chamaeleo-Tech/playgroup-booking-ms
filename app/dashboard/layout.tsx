@@ -30,8 +30,11 @@ import {
     AccountCircle,
     EventNote as EventIcon,
     Star as PopularIcon,
-    Group as UsersIcon
+    Group as UsersIcon,
+    AdminPanelSettings as StaffIcon
 } from '@mui/icons-material';
+
+import { StaffPermission } from '@/services/staff.service';
 
 const drawerWidth = 300;
 
@@ -44,11 +47,27 @@ export default function DashboardLayout({ children }: Props) {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
+    const [permissions, setPermissions] = React.useState<string[]>([]);
+    const [isSystemAdmin, setIsSystemAdmin] = React.useState(false);
+    const [mounted, setMounted] = React.useState(false);
 
     React.useEffect(() => {
+        setMounted(true);
         const token = localStorage.getItem("token");
         if (!token) {
             router.push("/login");
+            return;
+        }
+
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                setPermissions(user.permissions || []);
+                setIsSystemAdmin(user.role?.includes("ROLE_SYSTEM_ADMIN") || false);
+            } catch (e) {
+                console.error("Error parsing user data", e);
+            }
         }
     }, [router]);
 
@@ -67,14 +86,67 @@ export default function DashboardLayout({ children }: Props) {
         }
     };
 
-    const menuItems = [
-        { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-        { text: 'Users', icon: <UsersIcon />, path: '/dashboard/users' },
-        { text: 'Managers', icon: <PeopleIcon />, path: '/dashboard/managers' },
-        { text: 'Playground Categories', icon: <CategoryIcon />, path: '/dashboard/categories' },
-        { text: 'Popular Grounds', icon: <PopularIcon />, path: '/dashboard/popular' },
-        { text: 'Events', icon: <EventIcon />, path: '/dashboard/events' },
+    const allMenuItems = [
+        {
+            text: 'Dashboard',
+            icon: <DashboardIcon />,
+            path: '/dashboard',
+            permission: StaffPermission.VIEW_DASHBOARD
+        },
+        {
+            text: 'Users',
+            icon: <UsersIcon />,
+            path: '/dashboard/users',
+            permission: StaffPermission.MANAGE_USERS
+        },
+        {
+            text: 'Managers',
+            icon: <PeopleIcon />,
+            path: '/dashboard/managers',
+            permission: StaffPermission.MANAGE_MANAGERS
+        },
+        {
+            text: 'Staff',
+            icon: <StaffIcon />,
+            path: '/dashboard/staff',
+            adminOnly: true
+        },
+        {
+            text: 'Playground Categories',
+            icon: <CategoryIcon />,
+            path: '/dashboard/categories',
+            permission: StaffPermission.MANAGE_PLAYGROUND_CATEGORY
+        },
+        {
+            text: 'Popular Grounds',
+            icon: <PopularIcon />,
+            path: '/dashboard/popular',
+            permission: StaffPermission.MANAGE_POPULAR_GROUND
+        },
+        {
+            text: 'Events',
+            icon: <EventIcon />,
+            path: '/dashboard/events',
+            permission: StaffPermission.MANAGE_EVENTS
+        },
     ];
+
+    const menuItems = allMenuItems.filter(item => {
+        // System Admin sees everything
+        if (isSystemAdmin) return true;
+
+        // Admin only items hidden from others
+        if (item.adminOnly) return false;
+
+        // Check permission if specified
+        if (item.permission) {
+            return permissions.includes(item.permission);
+        }
+
+        return true;
+    });
+
+    if (!mounted) return null;
 
     const drawer = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#ffffff' }}>
