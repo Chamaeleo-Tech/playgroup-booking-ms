@@ -31,7 +31,8 @@ import {
     EventNote as EventIcon,
     Star as PopularIcon,
     Group as UsersIcon,
-    AdminPanelSettings as StaffIcon
+    AdminPanelSettings as StaffIcon,
+    Campaign as CampaignIcon
 } from '@mui/icons-material';
 
 import { StaffPermission } from '@/services/staff.service';
@@ -128,6 +129,12 @@ export default function DashboardLayout({ children }: Props) {
             icon: <EventIcon />,
             path: '/dashboard/events',
             permission: StaffPermission.MANAGE_EVENTS
+        },
+        {
+            text: 'Broadcast',
+            icon: <CampaignIcon />,
+            path: '/dashboard/notifications',
+            adminOnly: true
         },
     ];
 
