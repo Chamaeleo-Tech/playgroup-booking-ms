@@ -50,6 +50,7 @@ export default function DashboardLayout({ children }: Props) {
     const [isClosing, setIsClosing] = React.useState(false);
     const [permissions, setPermissions] = React.useState<string[]>([]);
     const [isSystemAdmin, setIsSystemAdmin] = React.useState(false);
+    const [user, setUser] = React.useState<any>(null);
     const [mounted, setMounted] = React.useState(false);
 
     React.useEffect(() => {
@@ -63,9 +64,10 @@ export default function DashboardLayout({ children }: Props) {
         const userStr = localStorage.getItem("user");
         if (userStr) {
             try {
-                const user = JSON.parse(userStr);
-                setPermissions(user.permissions || []);
-                setIsSystemAdmin(user.role?.includes("ROLE_SYSTEM_ADMIN") || false);
+                const userData = JSON.parse(userStr);
+                setUser(userData);
+                setPermissions(userData.permissions || []);
+                setIsSystemAdmin(userData.role?.includes("ROLE_SYSTEM_ADMIN") || false);
             } catch (e) {
                 console.error("Error parsing user data", e);
             }
@@ -289,7 +291,11 @@ export default function DashboardLayout({ children }: Props) {
                     <Stack direction="row" spacing={2} alignItems="center">
                         <Chip
                             icon={<AccountCircle />}
-                            label="Admin"
+                            label={user
+                                ? (user.firstName && user.lastName
+                                    ? `${user.firstName} ${user.lastName}`
+                                    : user.email)
+                                : "Admin"}
                             variant="outlined"
                             size="small"
                             sx={{
@@ -307,7 +313,7 @@ export default function DashboardLayout({ children }: Props) {
                                 fontWeight: 'bold'
                             }}
                         >
-                            A
+                            {user && user.firstName ? user.firstName[0].toUpperCase() : (user && user.email ? user.email[0].toUpperCase() : "A")}
                         </Avatar>
                     </Stack>
                 </Toolbar>

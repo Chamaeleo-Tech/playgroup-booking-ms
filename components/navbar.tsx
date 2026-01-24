@@ -19,7 +19,13 @@ export function Navbar() {
             <div className="flex w-full justify-end">
                 <div className="flex items-center gap-x-2 text-sm text-muted-foreground bg-secondary px-3 py-1.5 rounded-full">
                     <User className="h-4 w-4" />
-                    <span>{user ? user.email : "Admin"}</span>
+                    <span>
+                        {user
+                            ? (user.firstName && user.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : user.email)
+                            : "Admin"}
+                    </span>
                 </div>
             </div>
         </div>
