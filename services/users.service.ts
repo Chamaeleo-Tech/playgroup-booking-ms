@@ -19,6 +19,11 @@ export interface UserFilters {
     size?: number;
 }
 
+export interface ChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
+}
+
 export interface Page<T> {
     content: T[];
     page: {
@@ -72,6 +77,13 @@ class UserService {
      */
     async disableUser(id: number): Promise<void> {
         await api.put(`/users/${id}/disable`);
+    }
+
+    /**
+     * Change user password
+     */
+    async changePassword(request: ChangePasswordRequest): Promise<void> {
+        await api.post("/users/change-password", request);
     }
 }
 

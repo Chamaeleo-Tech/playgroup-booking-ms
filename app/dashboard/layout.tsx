@@ -32,10 +32,12 @@ import {
     Star as PopularIcon,
     Group as UsersIcon,
     AdminPanelSettings as StaffIcon,
-    Campaign as CampaignIcon
+    Campaign as CampaignIcon,
+    Lock as LockIcon
 } from '@mui/icons-material';
 
 import { StaffPermission } from '@/services/staff.service';
+import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 
 const drawerWidth = 300;
 
@@ -52,6 +54,7 @@ export default function DashboardLayout({ children }: Props) {
     const [isSystemAdmin, setIsSystemAdmin] = React.useState(false);
     const [user, setUser] = React.useState<any>(null);
     const [mounted, setMounted] = React.useState(false);
+    const [changePasswordOpen, setChangePasswordOpen] = React.useState(false);
 
     React.useEffect(() => {
         setMounted(true);
@@ -231,6 +234,29 @@ export default function DashboardLayout({ children }: Props) {
 
             <Divider />
             <List sx={{ px: 2, py: 2 }}>
+                <ListItem disablePadding sx={{ mb: 0.5 }}>
+                    <ListItemButton
+                        onClick={() => setChangePasswordOpen(true)}
+                        sx={{
+                            borderRadius: 2,
+                            py: 1.5,
+                            '&:hover': {
+                                bgcolor: '#f0fdf4',
+                            }
+                        }}
+                    >
+                        <ListItemIcon sx={{ minWidth: 40 }}>
+                            <LockIcon sx={{ color: '#00a195' }} />
+                        </ListItemIcon>
+                        <ListItemText
+                            primary="Change Password"
+                            primaryTypographyProps={{
+                                color: '#00a195',
+                                fontWeight: 500
+                            }}
+                        />
+                    </ListItemButton>
+                </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton
                         onClick={() => {
@@ -369,6 +395,8 @@ export default function DashboardLayout({ children }: Props) {
                 <Toolbar />
                 {children}
             </Box>
-        </Box>
+
+            <ChangePasswordDialog open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)} />
+        </Box >
     );
 }
